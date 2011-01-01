@@ -10,6 +10,6 @@ setup(
     author_email="bencoe@gmail.com",
     url="https://github.com/bcoe/mongate",
     packages = find_packages(),
-    install_requires = ['pymongo', 'httplib2'],
+    install_requires = ['pymongo', 'httplib2', 'simplejson'],
     tests_require=['nose', 'coverage']
 )
