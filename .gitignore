@@ -1,0 +1,7 @@
+*.py?
+*.egg-info
+*.swp
+*DS_Store
+*build
+*dist
+*pycontext.egg-info
