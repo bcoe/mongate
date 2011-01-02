@@ -16,11 +16,22 @@ class Collection(object):
     """
     insert_action = '_insert'
     find_action = '_find'
+    remove_action = '_remove'
     
     def __init__(self, name, connection, database):
         self.name = name
         self.database = database
         self.connection = connection
+        
+    def remove(self, criteria={}):
+        criteria = self._replace_id_with_object(criteria)
+        url = self._create_url(self.remove_action)
+        payload = self._create_remove_payload(criteria)
+        response_object = self._perform_request(url, payload=payload)
+        return response_object
+    
+    def _create_remove_payload(self, criteria):
+        return "criteria=%s" % json.dumps(criteria)
         
     def find(self, criteria={}):
         criteria = self._replace_id_with_object(criteria)
