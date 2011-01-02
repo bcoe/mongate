@@ -17,21 +17,40 @@ class Collection(object):
     insert_action = '_insert'
     find_action = '_find'
     remove_action = '_remove'
+    update_action = '_update'
     
     def __init__(self, name, connection, database):
         self.name = name
         self.database = database
         self.connection = connection
+    
+    def update(self, criteria, document):
+        criteria = self._replace_id_with_object(criteria)
+        url = self._create_url(self.update_action)
+        payload = self._create_update_payload(criteria, document)
+        return self._perform_request(url, payload=payload)
+        
+    def _create_update_payload(self, criteria, document):
+        return "criteria=%s&newobj=%s" % (
+            json.dumps(criteria),
+            json.dumps(document)
+        )
         
     def remove(self, criteria={}):
         criteria = self._replace_id_with_object(criteria)
         url = self._create_url(self.remove_action)
         payload = self._create_remove_payload(criteria)
-        response_object = self._perform_request(url, payload=payload)
-        return response_object
+        return self._perform_request(url, payload=payload)
     
     def _create_remove_payload(self, criteria):
         return "criteria=%s" % json.dumps(criteria)
+        
+    def find_one(self, criteria):
+        results = self.find(criteria)
+        if len(results) > 0:
+            return results[0]
+        else:
+            return []
         
     def find(self, criteria={}):
         criteria = self._replace_id_with_object(criteria)
@@ -41,10 +60,9 @@ class Collection(object):
         return self._process_response_object(response_object)
         
     def _process_response_object(self, response_object):
-        result = []
         for result in response_object['results']:
             result['_id'] = result['_id']['$oid']
-        return result
+        return response_object['results']
 
     def _create_find_get_params(self, criteria):
         return "?batch_size=1&criteria=%s" % urllib.quote(
@@ -56,9 +74,9 @@ class Collection(object):
             criteria['_id'] = {'$oid': criteria['_id']}
         return criteria
         
-    def insert(self, dictionary):
+    def insert(self, document):
         url = self._create_url(self.insert_action)
-        payload = self._create_insert_payload(dictionary)
+        payload = self._create_insert_payload(document)
         response_object = self._perform_request(url, payload, 'POST')
         return response_object['oids'][0]['$oid']
         
@@ -71,8 +89,8 @@ class Collection(object):
             action
         )
         
-    def _create_insert_payload(self, dictionary):
-        return "docs=[%s]" %  urllib.quote( json.dumps(dictionary) )
+    def _create_insert_payload(self, document):
+        return "docs=[%s]" %  urllib.quote( json.dumps(document) )
         
     def _perform_request(self, url, payload='', method='POST', get_params=''):
         http = httplib2.Http()

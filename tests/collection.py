@@ -28,6 +28,7 @@ class TestCollection(unittest.TestCase):
     def _insert_data(self):
         self.collection.insert({
             'name': 'Benjamin',
+            'age': 27,
             'profession': 'Software Developer'
         })
         
@@ -43,7 +44,7 @@ class TestCollection(unittest.TestCase):
             '_id': oid
         })
         
-        self.assertEqual('tasty', retrieved_collection['apple'])
+        self.assertEqual('tasty', retrieved_collection[0]['apple'])
         
     def test_collection_find_by_key(self):
         self._insert_data()
@@ -52,7 +53,7 @@ class TestCollection(unittest.TestCase):
             'apple': 'tasty'
         })
         
-        self.assertEqual('tasty', retrieved_collection['apple'])
+        self.assertEqual('tasty', retrieved_collection[0]['apple'])
         
     def test_collection_find_with_invalid_characters(self):
         oid = self.collection.insert({
@@ -64,7 +65,7 @@ class TestCollection(unittest.TestCase):
             'name': 'Benjamin & Company'
         })
         
-        self.assertEqual('Software Developer?', retrieved_collection['profession'])
+        self.assertEqual('Software Developer?', retrieved_collection[0]['profession'])
         
     def test_collection_find_key_that_doesnt_exist(self):
         self._insert_data()
@@ -111,6 +112,27 @@ class TestCollection(unittest.TestCase):
         })
         
         self.assertFalse(retrieved_collection)
+        
+    def test_update_with_key(self):
+        self._insert_data()
+        
+        self.collection.update(
+            {
+                'name': 'Benjamin'
+            },
+            {
+                "$inc": {
+                    'age': 1
+                }
+            }
+        )
+        
+        retrieved_collection = self.collection.find_one({
+            'name': 'Benjamin'
+        })
+        
+        self.assertEqual(28, retrieved_collection['age'])
+
             
 if __name__ == "__main__":
     unittest.main()
