@@ -81,7 +81,7 @@ class Collection(object):
         return response_object['results']
 
     def _create_find_get_params(self, criteria):
-        return "?batch_size=1&criteria=%s" % urllib.quote(
+        return "?batch_size=9999999&criteria=%s" % urllib.quote(
                 json.dumps(criteria)
             )
         
