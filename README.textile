@@ -32,4 +32,7 @@ h3. Update Data
 
 or use *save()* with an object that has already been loaded.
 
+h3. HTTPS/Basic Auth
+
+Mongate supports HTTPS and Basic-Auth. just set *auth* and *https* to *True* when instantiating a Connection.
  
