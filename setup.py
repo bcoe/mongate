@@ -4,7 +4,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="mongate",
-    version="0.0.1",
+    version="1.0.0",
     description="Wrapper for Sleepy Mongoose that provides the same interface as Pymongo.",
     author="Benjamin Coe",
     author_email="bencoe@gmail.com",
