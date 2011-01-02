@@ -97,7 +97,13 @@ class Collection(object):
         return response_object['oids'][0]['$oid']
         
     def _create_url(self, action):
-        return "http://%s:%s/%s/%s/%s" % (
+        if self.connection.is_https():
+            prefix = 'https'
+        else:
+            prefix = 'http'
+        
+        return "%s://%s:%s/%s/%s/%s" % (
+            prefix,
             self.connection.get_host(),
             self.connection.get_port(),
             self.database.get_name(),
@@ -109,7 +115,7 @@ class Collection(object):
         return "docs=[%s]" %  urllib.quote( json.dumps(document) )
         
     def _perform_request(self, url, payload='', method='POST', get_params=''):
-        http = httplib2.Http()
+        http = self.connection.get_http()
 
         try:
 
