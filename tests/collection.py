@@ -127,12 +127,41 @@ class TestCollection(unittest.TestCase):
             }
         )
         
-        retrieved_collection = self.collection.find_one({
+        retrieved_collection = self.collection.find({
             'name': 'Benjamin'
         })
         
-        self.assertEqual(28, retrieved_collection['age'])
+        self.assertEqual(28, retrieved_collection[0]['age'])
+        self.assertEqual(1, len(retrieved_collection))
+        
+    def test_save_updates_document_if_it_already_exists(self):
+        self._insert_data()
+        
+        retrieved_collection = self.collection.find({
+            'name': 'Benjamin'
+        })
+        
+        retrieved_collection[0]['name'] = 'Ben'
+        self.collection.save(retrieved_collection[0])
+        
+        retrieved_collection = self.collection.find({
+            'age': 27
+        })
 
+        self.assertEqual('Ben', retrieved_collection[0]['name'])
+        self.assertEqual(1, len(retrieved_collection))
+        
+    def test_save_creates_document_if_it_does_not_exist(self):
+        self.collection.save({
+            'name': 'Bob',
+            'age': 'old'
+        })
+        
+        retrieved_collection = self.collection.find_one({
+            'age': 'old'
+        })
+        
+        self.assertEqual('Bob', retrieved_collection['name'])
             
 if __name__ == "__main__":
     unittest.main()

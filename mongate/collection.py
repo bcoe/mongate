@@ -23,6 +23,22 @@ class Collection(object):
         self.name = name
         self.database = database
         self.connection = connection
+        
+    def save(self, document):
+        if document.has_key('_id'):
+            criteria = {
+                '_id': document['_id']
+            }
+            
+            del document['_id']
+            
+            document = {
+                '$set': document
+            }
+            
+            self.update(criteria, document)
+        else:
+            self.insert(document)
     
     def update(self, criteria, document):
         criteria = self._replace_id_with_object(criteria)
