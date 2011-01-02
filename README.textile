@@ -2,3 +2,34 @@ h1. Mongate
 
 A wrapper for "Sleepy Mongoose":https://github.com/kchodorow/sleepy.mongoose that provides the same interface as Pymongo.
 
+h2. Usage
+
+h3. Connect to Sleepy Mongoose
+
+*connection = Connection(SLEEPY_HOST, SLEEPY_PORT)*
+*connection.connect_to_mongo(host=MONGO_HOST, port=MONGO_PORT)*
+
+h3. Select a Database and Collection
+
+*db = connection.db_name*
+*collection = db.collection_name*
+
+h3. Insert Data
+
+*collection.save({'key': 'value'})*
+
+h3. Retrieve Data
+
+*collection.find({'key': 'value'})*
+
+or
+
+*collection.find_one({'key': 'value'})*
+
+h3. Update Data
+
+*collection.update({'key': 'value'}, {'$set': {'key': 'value'}})*
+
+or use *save()* with an object that has already been loaded.
+
+ 
