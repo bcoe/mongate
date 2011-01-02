@@ -1,5 +1,6 @@
 import unittest
 from mongate.connection import Connection, ConnectionError
+from tests import SLEEPY_HOST, SLEEPY_PORT, MONGO_HOST, MONGO_PORT
 
 class TestConnection(unittest.TestCase):
     def setUp(self):
@@ -32,8 +33,8 @@ class TestConnection(unittest.TestCase):
         self.assertTrue(error_occurred)
         
     def test_connect_to_mongo_with_valid_info(self):
-        connection = Connection('localhost', 27080)
-        self.assertTrue(connection.connect_to_mongo(host='localhost', port=27017))
+        connection = Connection(SLEEPY_HOST, SLEEPY_PORT)
+        self.assertTrue(connection.connect_to_mongo(host=MONGO_HOST, port=MONGO_PORT))
         
 if __name__ == "__main__":
     unittest.main()

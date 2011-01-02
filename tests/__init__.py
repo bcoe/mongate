@@ -1,0 +1,4 @@
+SLEEPY_HOST = 'localhost'
+SLEEPY_PORT = 27080
+MONGO_HOST = 'localhost'
+MONGO_PORT = 27017
