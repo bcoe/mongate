@@ -21,11 +21,20 @@ class Connection(object):
     __connect_endpoint = '_connect'
     
     def __init__(self, host='localhost', port=27080, https=False, auth=False, username='', password=''):
+        """
+        Set auth to True and an 'https' connection will be made
+        rather than an http connection.
+        
+        If you set auth to True HTTP Basic Authentication will be
+        used with the username and password provided.
+        """
+        
         self.__host = host
         self.__port = port
         self.__https = https
         self.__username = username
         self.__password = password
+        self.__auth = auth
         
     def get_host(self):
         return self.__host
@@ -34,32 +43,50 @@ class Connection(object):
         return self.__port
         
     def connect_to_mongo(self, host='localhost', port=27017):
-        http = self.get_http()
+        """
+        Used to tell Sleepy Mongoose about the
+        MongoDB server it should connect to.
+        """
         url = self._create_connect_url()
         payload = self._create_connect_payload(host, port)
+        self.perform_request(
+            url,
+            payload,
+            raise_error=self._raise_connection_error
+        )
+        return True
         
+    def perform_request(self, url, payload='', method='POST', get_params='', raise_error=None):
+        """
+        Wrapper for performing requests with httplib2
+        """
+        http = self.get_http()
+
         try:
 
             resp, content = http.request(
-                url,
-                method="POST",
+                "%s%s" % (url, get_params),
+                method=method,
                 headers={
                     'Content-Type': 'application/x-www-form-urlencoded'
                 },
                 body=payload
             )
-            
-            raise Exception(content)
+
             response_object = json.loads(content)
-            if not response_object['ok']:
-                self._raise_connection_error()
+            if response_object.has_key('ok') and not response_object['ok']:
+                raise_error()
                 
+            return response_object
+            
         except ServerNotFoundError:
-            self._raise_connection_error()
-        
-        return True
+            raise_error()
         
     def get_http(self):
+        """
+        Returns an http object, setting the basic auth
+        credentials if they are provided.
+        """
         http = httplib2.Http()
         
         if self.auth:
