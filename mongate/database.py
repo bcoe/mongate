@@ -16,6 +16,9 @@ class Database(object):
     def get_name(self):
         return self.__name
         
+    def drop_collection(self, collection_name):
+        self[collection_name].remove()
+        
     def __getitem__(self, key):
         return self._return_collection(key)
         
