@@ -1,3 +1,4 @@
 h1. Mongate
 
-A wrapper for Sleepy Mongoose that provides the same interface as Pymongo.
+A wrapper for "Sleepy Mongoose":https://github.com/kchodorow/sleepy.mongoose that provides the same interface as Pymongo.
+
