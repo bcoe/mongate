@@ -14,6 +14,7 @@ class Batch(Collection):
     """
     
     batch_action = '_batch'
+    modifying_action = '/insert/update/remove'
     
     def __init__(self, collection, connection):
         self.name = collection.get_name()
@@ -25,8 +26,8 @@ class Batch(Collection):
 
     def add_insert(self, document):
         
-        self._check_for_insert_update_exception()
-        self.batch_type = 'insert/update'
+        self._check_for_modify_exception()
+        self.batch_type = self.modifying_action
         
         self.requests.append({
             'method': 'POST',
@@ -38,7 +39,7 @@ class Batch(Collection):
             }
         })
     
-    def _check_for_insert_update_exception(self):
+    def _check_for_modify_exception(self):
         if self.batch_type == 'find':
             raise AddError("""
             You cannot add an insert or update operation
@@ -46,8 +47,8 @@ class Batch(Collection):
             """)
         
     def add_update(self, criteria, document):
-        self._check_for_insert_update_exception()
-        self.batch_type = 'insert/update'
+        self._check_for_modify_exception()
+        self.batch_type = self.modifying_action
         
         self.requests.append({
             'method': 'POST',
@@ -78,11 +79,27 @@ class Batch(Collection):
         })
         
     def _check_for_find_exception(self):
-        if self.batch_type == 'insert/update':
+        if self.batch_type == self.modifying_action:
             raise AddError("""
             You cannot add a find operation to a
             batch with find an insert or update operation.
             """)
+            
+    def add_remove(self, criteria):
+        
+        criteria = self._replace_id_with_object(criteria)
+        self._check_for_modify_exception()
+        self.batch_type = self.modifying_action
+        
+        self.requests.append({
+            'method': 'POST',
+            'db': self.collection.database.get_name(),
+            'collection': self.get_name(),
+            'cmd': '_remove',
+            'args': {
+                'criteria': json.dumps(criteria)
+            }
+        })
         
     def execute(self):
         """

@@ -72,7 +72,7 @@ class TestCollection(unittest.TestCase):
             },
             {
                 '$set': {
-                    'banana': 'phalic'
+                    'banana': 'tasty'
                 }
             }
         )
@@ -82,7 +82,7 @@ class TestCollection(unittest.TestCase):
         retrieved_document_1, retrieved_document_2 = self._retrieve_documents()
         
         self.assertEqual(3, retrieved_document_1['bar']) 
-        self.assertEqual('phalic', retrieved_document_2['banana'])
+        self.assertEqual('tasty', retrieved_document_2['banana'])
         
     def test_batch_find(self):
         self._perform_batch_insertion()
@@ -122,6 +122,30 @@ class TestCollection(unittest.TestCase):
         batch = Batch(self.collection, self.connection)        
         result = batch.find()
         self.assertFalse(result)
-                    
+        
+    def test_batch_one_remove(self):
+        self._perform_batch_insertion()
+        batch = Batch(self.collection, self.connection)
+        batch.add_remove({
+            'batch_insert_1': 3
+        })
+        batch.execute()
+        self.assertFalse(self.collection.find({'batch_insert_1': 3}))
+        self.assertTrue(self.collection.find({'batch_insert_3': 29}))
+        
+    def test_batch_multiple_removes(self):
+        self._perform_batch_insertion()
+        batch = Batch(self.collection, self.connection)
+        batch.add_remove({
+            'batch_insert_1': 3
+        })
+        batch.add_remove({
+            'batch_insert_3': 29
+        })
+        batch.execute()
+        self.assertFalse(self.collection.find({'batch_insert_1': 3}))
+        self.assertFalse(self.collection.find({'batch_insert_3': 29}))
+        self.assertTrue(self.collection.find({'batch_insert_2': 'banana'}))
+                            
 if __name__ == "__main__":
     unittest.main()

@@ -35,4 +35,35 @@ or use *save()* with an object that has already been loaded.
 h3. HTTPS/Basic Auth
 
 Mongate supports HTTPS and Basic-Auth. just set *auth* and *https* to *True* when instantiating a Connection.
- 
+
+h3. Batch Operations
+
+I've implemented an object with a similar API for performing batch operations in Mongate this should make real-world applications more practical.
+
+Batch operations supported: *update*, *remove*, *find*. They all work similar to the following (see unit tests for more details):
+
+batch = Batch(self.collection, self.connection)
+
+batch.add_update(
+    {
+        'batch_insert_1': 3
+    },
+    {
+        "$inc": {
+            "bar": 1
+        }
+    }
+)
+
+batch.add_update(
+    {
+        'batch_insert_2': 'banana'
+    },
+    {
+        '$set': {
+            'banana': 'tasty'
+        }
+    }
+)
+
+batch.execute()
