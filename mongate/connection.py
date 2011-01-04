@@ -4,6 +4,7 @@ A connection to a specific MongoDB database.
 
 import httplib2, urllib
 import simplejson as json
+from simplejson import JSONDecodeError
 from mongate.database import Database
 from httplib2 import ServerNotFoundError
 
@@ -74,13 +75,33 @@ class Connection(object):
             )
 
             response_object = json.loads(content)
-            if response_object.has_key('ok') and not response_object['ok']:
-                raise_error()
-                
+            
+            if not self._valid_response(response_object):
+                raise_error(content)
+                             
             return response_object
             
-        except ServerNotFoundError:
-            raise_error()
+        except ServerNotFoundError, exception:
+            raise_error(str(exception))
+        except JSONDecodeError, exception:
+            raise_error("%s string = %s" % (
+                str(exception),
+                content
+            ))
+            
+    def _valid_response(self, response_object):
+        if isinstance(response_object, list):
+            return self._batch_operation_ok(response_object)
+        
+        if not response_object.has_key('ok'):
+            return True
+            
+        return response_object.has_key('ok') and response_object['ok']
+        
+    def _batch_operation_ok(self, response_object):
+        if len(response_object) > 0 and response_object[0].has_key('ok') and not response_object[0]['ok']:
+            return False
+        return True
         
     def get_http(self):
         """
@@ -118,11 +139,13 @@ class Connection(object):
             )
         })
         
-    def _raise_connection_error(self):
+    def _raise_connection_error(self, exception_string=''):
         raise ConnectionError("""
         Could not connect sleepy.mongoose to MongoDB.
         Make sure you have the sleepy.mongoose server running.
-        """)
+        Because [%s]""" % (
+            exception_string
+        ))
         
     def __getitem__(self, key):
         return self._return_database(key)

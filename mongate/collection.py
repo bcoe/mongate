@@ -24,6 +24,9 @@ class Collection(object):
         self.database = database
         self.connection = connection
         
+    def get_name(self):
+        return self.name
+        
     def save(self, document):
         """
         Update a document if it exists, insert the
@@ -88,7 +91,7 @@ class Collection(object):
         if len(results) > 0:
             return results[0]
         else:
-            return []
+            return False
         
     def find(self, criteria={}):
         """
@@ -154,8 +157,10 @@ class Collection(object):
     def _create_insert_payload(self, document):
         return "docs=[%s]" %  urllib.quote( json.dumps(document) )
     
-    def _raise_collection_error(self):
+    def _raise_collection_error(self, exception_string=''):
         raise CollectionError("""
         An error occurred while performing an
-        operation on a collection.
-        """)
+        operation on a collection. Because [%s] 
+        """ % (
+            exception_string
+        ))
