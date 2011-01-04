@@ -7,6 +7,7 @@ setup(
     version="2.0.1",
     description="A client library for Sleepy Mongoose that provides the same interface as Pymongo. With support for batch operations.",
     author="Benjamin Coe",
+    author_twitter="@benjamincoe",
     author_email="bencoe@gmail.com",
     url="https://github.com/bcoe/mongate",
     packages = find_packages(),

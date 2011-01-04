@@ -44,6 +44,7 @@ Batch operations supported: *update*, *remove*, *find*. They all work similar to
 
 batch = Batch(self.collection, self.connection)
 
+<code>
 batch.add_update(
     {
         'batch_insert_1': 3
@@ -67,3 +68,4 @@ batch.add_update(
 )
 
 batch.execute()
+</code>
