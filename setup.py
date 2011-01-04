@@ -4,7 +4,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="mongate",
-    version="2.0.1",
+    version="2.1.0",
     description="A client library for Sleepy Mongoose that provides the same interface as Pymongo. With support for batch operations.",
     author="Benjamin Coe",
     author_twitter="@benjamincoe",

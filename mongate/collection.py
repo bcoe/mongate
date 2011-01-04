@@ -63,8 +63,8 @@ class Collection(object):
         
     def _create_update_payload(self, criteria, document):
         return "criteria=%s&newobj=%s" % (
-            json.dumps(criteria),
-            json.dumps(document)
+            urllib.quote( json.dumps(criteria) ),
+            urllib.quote( json.dumps(document) )
         )
         
     def remove(self, criteria={}):

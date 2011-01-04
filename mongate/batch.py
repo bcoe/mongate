@@ -117,7 +117,7 @@ class Batch(Collection):
         return response_object
         
     def _create_batch_payload(self):
-        return "requests=%s" % json.dumps(self.requests)
+        return "requests=%s" % urllib.quote( json.dumps(self.requests) )
         
     def find(self):
         results = []

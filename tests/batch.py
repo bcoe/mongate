@@ -50,6 +50,17 @@ class TestCollection(unittest.TestCase):
         retrieved_document_2 = self.collection.find_one({'batch_insert_2': 'banana'})
         return retrieved_document_1, retrieved_document_2
         
+    def test_batch_insert_with_invalid_characters(self):
+        batch = Batch(self.collection, self.connection)
+        
+        batch.add_insert({
+            'batch_insert_5': 'Ben & Company',
+            'bar': 2
+        })
+        
+        batch.execute()
+        self.assertTrue(self.collection.find_one({'batch_insert_5': 'Ben & Company'}))
+        
     def test_batch_update(self):
         self._perform_batch_insertion()
         
@@ -84,6 +95,30 @@ class TestCollection(unittest.TestCase):
         self.assertEqual(3, retrieved_document_1['bar']) 
         self.assertEqual('tasty', retrieved_document_2['banana'])
         
+    def test_batch_update_with_invalid_characters(self):
+        self._perform_batch_insertion()
+        
+        batch = Batch(self.collection, self.connection)
+        
+        batch.add_update(
+            {
+                'batch_insert_1': 3
+            },
+            {
+                "$inc": {
+                    "bar": 1
+                }
+            }
+        )
+        
+        exception = False
+        try:
+            batch.execute()
+        except Exception:
+            exception = True
+            
+        self.assertFalse(exception)
+        
     def test_batch_find(self):
         self._perform_batch_insertion()
         batch = Batch(self.collection, self.connection)
@@ -100,6 +135,16 @@ class TestCollection(unittest.TestCase):
         self.assertEqual(2, len(result))
         self.assertEqual(2, len(result[0]))
         self.assertEqual('apple', result[1][0]['banana'])
+        
+    def test_batch_find_with_invalid_characters(self):
+        self._perform_batch_insertion()
+        batch = Batch(self.collection, self.connection)
+        
+        batch.add_find({
+            'bar': 'ben & company'
+        })
+        
+        self.assertEqual(0, len(batch.find()[0]))
         
     def test_batch_find_with_no_results(self):
         self._perform_batch_insertion()

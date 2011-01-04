@@ -20,7 +20,7 @@ class TestCollection(unittest.TestCase):
         
     def test_collection_insert_with_invalid_characters(self):
         oid = self.collection.insert({
-            'name': 'Benjamin & Company',
+            'name': 'Benjamin & Company=bar',
             'profession': 'Software Developer?'
         })
         self.assertTrue(oid)
@@ -48,6 +48,10 @@ class TestCollection(unittest.TestCase):
         
     def test_find_with_no_results(self):
         self.assertFalse(self.collection.find_one({'Elvis': True}))
+        
+    def test_find_with_invalid_characters(self):
+        self.assertFalse(self.collection.find({'Elvis & Company': True}))
+        self.assertFalse(self.collection.find_one({'Elvis & Company': True}))
         
     def test_collection_find_by_key(self):
         self._insert_data()
@@ -136,6 +140,27 @@ class TestCollection(unittest.TestCase):
         
         self.assertEqual(28, retrieved_collection[0]['age'])
         self.assertEqual(1, len(retrieved_collection))
+        
+    def test_update_with_invalid_characters(self):
+        self._insert_data()
+        
+        self.collection.update(
+            {
+                'name': 'Benjamin',
+                'invalid': '&&&'
+            },
+            {
+                "$inc": {
+                    'age': 1
+                }
+            }
+        )
+        
+        retrieved_collection = self.collection.find({
+            'name': 'Benjamin'
+        })
+        
+        self.assertEqual(27, retrieved_collection[0]['age'])
         
     def test_save_updates_document_if_it_already_exists(self):
         self._insert_data()
