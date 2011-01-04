@@ -37,7 +37,13 @@ class TestCollection(unittest.TestCase):
             'banana': 'apple'
         })
         
-        result = batch.execute()
+        batch.add_insert({
+            'batch_insert_3': 29,
+            'bar': 2
+        })
+        
+        batch.execute()
+        return batch
         
     def _retrieve_documents(self):
         retrieved_document_1 = self.collection.find_one({'batch_insert_1': 3})
@@ -77,6 +83,45 @@ class TestCollection(unittest.TestCase):
         
         self.assertEqual(3, retrieved_document_1['bar']) 
         self.assertEqual('phalic', retrieved_document_2['banana'])
+        
+    def test_batch_find(self):
+        self._perform_batch_insertion()
+        batch = Batch(self.collection, self.connection)
+        
+        batch.add_find({
+            'bar': 2
+        })
+        
+        batch.add_find({
+            'batch_insert_2': 'banana'
+        })
+        
+        result = batch.find()
+        self.assertEqual(2, len(result))
+        self.assertEqual(2, len(result[0]))
+        self.assertEqual('apple', result[1][0]['banana'])
+        
+    def test_batch_find_with_no_results(self):
+        self._perform_batch_insertion()
+        batch = Batch(self.collection, self.connection)
+        
+        batch.add_find({
+            'bar': 23434
+        })
+        
+        batch.add_find({
+            'batch_insert_2': 'abananasdf'
+        })
+        
+        result = batch.find()
+        self.assertFalse(result[0])
+        self.assertFalse(result[1])
+        
+    def test_batch_find_with_no_jobs(self):
+        self._perform_batch_insertion()
+        batch = Batch(self.collection, self.connection)        
+        result = batch.find()
+        self.assertFalse(result)
                     
 if __name__ == "__main__":
     unittest.main()

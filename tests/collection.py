@@ -46,6 +46,9 @@ class TestCollection(unittest.TestCase):
         
         self.assertEqual('tasty', retrieved_collection[0]['apple'])
         
+    def test_find_with_no_results(self):
+        self.assertFalse(self.collection.find_one({'Elvis': True}))
+        
     def test_collection_find_by_key(self):
         self._insert_data()
     
