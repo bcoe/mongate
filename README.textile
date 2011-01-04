@@ -42,30 +42,10 @@ I've implemented an object with a similar API for performing batch operations in
 
 Batch operations supported: *update*, *remove*, *find*. They all work similar to the following (see unit tests for more details):
 
-batch = Batch(self.collection, self.connection)
+*batch = Batch(self.collection, self.connection)*
 
-<code>
-batch.add_update(
-    {
-        'batch_insert_1': 3
-    },
-    {
-        "$inc": {
-            "bar": 1
-        }
-    }
-)
+*batch.add_update({'batch_insert_1': 3}, {"$inc": {"bar": 1}})*
 
-batch.add_update(
-    {
-        'batch_insert_2': 'banana'
-    },
-    {
-        '$set': {
-            'banana': 'tasty'
-        }
-    }
-)
+*batch.add_update('batch_insert_2': 'banana'}, {'$set': {'banana': 'tasty'}})*
 
-batch.execute()
-</code>
+*batch.execute()*
