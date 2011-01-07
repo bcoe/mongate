@@ -87,7 +87,7 @@ class Collection(object):
         results = self.find(criteria, ['_id'])
         return len(results)
         
-    def find_one(self, criteria):
+    def find_one(self, criteria={}):
         """
         Return the first result fetched by find.
         """
