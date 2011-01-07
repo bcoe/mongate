@@ -83,6 +83,10 @@ class Collection(object):
     def _create_remove_payload(self, criteria):
         return "criteria=%s" % json.dumps(criteria)
         
+    def count(self, criteria):
+        results = self.find(criteria, ['_id'])
+        return len(results)
+        
     def find_one(self, criteria):
         """
         Return the first result fetched by find.
@@ -93,14 +97,14 @@ class Collection(object):
         else:
             return False
         
-    def find(self, criteria={}):
+    def find(self, criteria={}, fields=False):
         """
         Find all documents matching the criteria, e.g.,
         {'foo': {'$lt': 5}}
         """
         criteria = self._replace_id_with_object(criteria)
         url = self._create_url(self.find_action)
-        get_params = self._create_find_get_params(criteria)
+        get_params = self._create_find_get_params(criteria, fields)
         response_object = self.connection.perform_request(
             url,
             get_params=get_params,
@@ -114,10 +118,18 @@ class Collection(object):
             result['_id'] = result['_id']['$oid']
         return response_object['results']
 
-    def _create_find_get_params(self, criteria):
-        return "?batch_size=9999999&criteria=%s" % urllib.quote(
+    def _create_find_get_params(self, criteria, fields=False):
+        params = "?batch_size=9999999&criteria=%s" % urllib.quote(
                 json.dumps(criteria)
             )
+        if fields:
+            params = "%s&fields=%s" % (
+                params,
+                urllib.quote(
+                    json.dumps(fields)
+                )
+            )
+        return params
         
     def _replace_id_with_object(self, criteria):
         if criteria.has_key('_id'):

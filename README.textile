@@ -26,6 +26,10 @@ or
 
 *collection.find_one({'key': 'value'})*
 
+h3. Count Data
+
+*collection.count({'key': 'value'})*
+
 h3. Update Data
 
 *collection.update({'key': 'value'}, {'$set': {'key': 'value'}})*

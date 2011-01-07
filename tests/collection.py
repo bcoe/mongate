@@ -190,6 +190,27 @@ class TestCollection(unittest.TestCase):
         })
         
         self.assertEqual('Bob', retrieved_collection['name'])
+        
+    def test_count_with_zero_results(self):
+        count = self.collection.count({'foo': 'bar'})
+        self.assertEqual(0, count)
+        
+    def test_count_with_zero_results(self):
+        self.collection.save({
+            'name': 'Bob',
+            'age': 'old'
+        })
+        self.collection.save({
+            'name': 'Bob',
+            'age': 'old'
+        })
+        self.collection.save({
+            'name': 'Bob',
+            'age': 'old'
+        })
+        
+        count = self.collection.count({'name': 'Bob'})
+        self.assertEqual(3, count)
             
 if __name__ == "__main__":
     unittest.main()
