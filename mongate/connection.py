@@ -57,7 +57,7 @@ class Connection(object):
         )
         return True
         
-    def perform_request(self, url, payload='', method='POST', get_params='', raise_error=None):
+    def perform_request(self, url, payload='', method='POST', get_params='', raise_error=None, retries=0):
         """
         Wrapper for performing requests with httplib2
         """
@@ -77,6 +77,9 @@ class Connection(object):
             response_object = json.loads(content)
             
             if not self._valid_response(response_object):
+                if retries < 3:
+                    self.perform_request(url, payload, method, get_params, raise_error, retries + 1)
+                    return
                 raise_error(content)
                              
             return response_object
