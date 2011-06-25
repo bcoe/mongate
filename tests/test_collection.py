@@ -61,7 +61,7 @@ class TestCollection(unittest.TestCase):
         })
         
         self.assertEqual('tasty', retrieved_collection[0]['apple'])
-        
+
     def test_collection_find_with_invalid_characters(self):
         oid = self.collection.insert({
             'name': 'Benjamin & Company',
@@ -73,6 +73,19 @@ class TestCollection(unittest.TestCase):
         })
         
         self.assertEqual('Software Developer?', retrieved_collection[0]['profession'])
+
+    def test_collection_find_with_nonoid_id(self):
+        self.collection.insert({
+            '_id' : 100,
+            'name' : 'Benjamin',
+            'profession' : 'Software Developer'
+        })
+        
+        retrieved_collection = self.collection.find({
+            'name': 'Benjamin'
+        })
+        
+        self.assertEqual(100, retrieved_collection[0]['_id'])
         
     def test_collection_find_key_that_doesnt_exist(self):
         self._insert_data()
