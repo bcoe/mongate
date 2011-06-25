@@ -1,10 +1,11 @@
 import unittest
 from mongate.connection import Connection
 from mongate.database import Database
+from tests import SLEEPY_HOST, SLEEPY_PORT
 
 class TestDatabase(unittest.TestCase):
     def setUp(self):
-        self.connection = Connection('localhost', '27080')
+        self.connection = Connection(SLEEPY_HOST, SLEEPY_PORT)
         
     def test_db_should_return_collection_when_array_access_used(self):
         db = self.connection['foo']
