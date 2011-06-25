@@ -12,5 +12,6 @@ setup(
     url="https://github.com/bcoe/mongate",
     packages = find_packages(),
     install_requires = ['pymongo', 'httplib2', 'simplejson'],
-    tests_require=['nose', 'coverage']
+    tests_require=['nose', 'coverage'],
+    test_suite = "nose.collector"
 )
