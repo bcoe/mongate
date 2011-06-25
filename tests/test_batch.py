@@ -17,7 +17,7 @@ class TestCollection(unittest.TestCase):
         
     def test_batch_insert(self):
         
-        self._perform_batch_insertion()        
+        self._perform_batch_insertion()
         
         retrieved_document_1, retrieved_document_2 = self._retrieve_documents()
         
