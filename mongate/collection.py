@@ -115,7 +115,11 @@ class Collection(object):
         
     def _process_response_object(self, response_object):
         for result in response_object['results']:
-            result['_id'] = result['_id']['$oid']
+            try:
+                result['_id'] = result['_id']['$oid']
+            except:
+                # This document is not using an ObjectId _id
+                pass
         return response_object['results']
 
     def _create_find_get_params(self, criteria, fields=False):
@@ -149,7 +153,11 @@ class Collection(object):
             'POST',
             raise_error=self._raise_collection_error
         )
-        return response_object['oids'][0]['$oid']
+        response = response_object['oids'][0]
+        try:
+            return response['$oid']
+        except TypeError:
+            return response
         
     def _create_url(self, action):
         if self.connection.is_https():
